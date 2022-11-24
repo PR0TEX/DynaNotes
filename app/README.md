@@ -1,3 +1,30 @@
+# Dependencies and VS Code extensions
+## Dependencies
+
+Check if you have installed any npm and node version
+
+```
+npm -v
+node -v
+```
+
+If not run commands below
+
+```
+sudo apt update
+sudo apt install nodejs npm
+```
+
+## VS Code extensions
+
+Marek's extensions:
+- Code Runner (don't know if this will be useful, you can run your files from VSC)
+- Code Spell Checker (ass the name suggests it checks your spelling)
+- ESLint (it is supposed to analyze your code)
+- GitLens (git extension)
+- JavaScript and TypeScript Nightly (JavaScript and TypeScript IntelliSense)
+- Live Server (don't know if this will be useful, you can a local development server)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
