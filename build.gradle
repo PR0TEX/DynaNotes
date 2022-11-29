@@ -23,6 +23,13 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
+	implementation 'org.springframework.data:spring-data-commons:2.7.5'
+	implementation 'org.springframework.boot:spring-boot-starter-web:2.7.5'
+	implementation 'javax.validation:validation-api:2.0.1.Final'
+	implementation 'org.springframework.data:spring-data-rest-core:4.0.0'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb:2.7.5'
+
 }
 
 tasks.named('test') {
