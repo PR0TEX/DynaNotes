@@ -15,6 +15,10 @@ sudo apt update
 sudo apt install nodejs npm
 ```
 
+Download node_modules before starting application
+```
+npm install
+```
 ## VS Code extensions
 
 Marek's extensions:
