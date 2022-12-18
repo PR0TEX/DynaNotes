@@ -97,4 +97,27 @@
           transform: scale(1.6);
       }
   }
+
+  .edit {
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    right: 35px;
+    transition: transform .3s ease;
+
+    &:hover {
+        transform: scale(1.6);
+    }
+
+  
+}
+
+.editBox{
+  background-color: #fff9be;
+  margin-top: 15px;
+  border: none;
+  min-width: 100%;
+  max-width: 100%;
+}
+
 }
