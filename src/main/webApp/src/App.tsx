@@ -1,5 +1,4 @@
 import React, { useState, useReducer } from 'react';
-import logo from './logo.svg';
 import './App.scss';
 import { v4 as uuid } from 'uuid';
 import { nodeModuleNameResolver, updateUnionTypeNode } from 'typescript';
