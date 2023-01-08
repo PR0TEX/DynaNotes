@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.AllArgsConstructor;
 import pl.edu.pg.projektGrupowy.DynaNotes.domain.Note;
-import pl.edu.pg.projektGrupowy.DynaNotes.repository.NoteRepository;
 import pl.edu.pg.projektGrupowy.DynaNotes.service.NoteService;
 
 @RestController
