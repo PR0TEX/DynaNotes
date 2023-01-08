@@ -1,0 +1,37 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.0.1'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+
+group = 'pl.edu.pg.projektGrupowy'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
+	implementation 'org.springframework.data:spring-data-commons:3.0.0'
+	implementation 'org.springframework.boot:spring-boot-starter-web:3.0.1'
+	implementation 'org.springframework.data:spring-data-rest-core:4.0.0'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb:3.0.1'
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
