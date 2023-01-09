@@ -28,7 +28,7 @@ const notesReducer = (prevState: any, action: any) => {
                 notes: prevState.notes.filter((note: { id: any; }) => note.id !== action.payload.id),
                 totalNotes: prevState.notes.length - 1,
             };
-            console.log('After DELETE_NOTE: ', newState);
+            // console.log('After DELETE_NOTE: ', newState);
             return newState;
         }
 
@@ -36,7 +36,7 @@ const notesReducer = (prevState: any, action: any) => {
             //changing internal note text
             prevState.notes.filter((note: { id: any; }) => note.id === action.payload.id)[0].text="test";
 
-            console.log('After EDIT_NOTE: ', prevState);
+            // console.log('After EDIT_NOTE: ', prevState);
             return prevState;
         }
     }
@@ -55,7 +55,8 @@ export function App() {
         const newNote = {
             id: uuid(),
             text: noteInput,
-            rotate: Math.floor(Math.random() * 20)
+            rotate: Math.floor(Math.random() * 20),
+            position: [0, 0]
         }
 
         dispatch({ type: 'ADD_NOTE', payload: newNote });
@@ -67,8 +68,10 @@ export function App() {
         event.preventDefault();
     }
 
-    const dropNote = (event: any) => {
-        console.log(event);
+    const dropNote = (event: any, note: any) => {
+        // console.log('DROP NOTE', event);        
+        note.position = [event.clientX, event.clientY];
+        // console.log('note', note)
         event.target.style.left = `${event.pageX - 50}px`;
         event.target.style.top = `${event.pageY - 50}px`;
     };
@@ -104,7 +107,7 @@ export function App() {
         }
 
         let pre = note.getElementsByTagName("pre")[0];
-        console.log(pre)
+        // console.log(pre)
 
         //end editing
         if(pre === undefined || pre === null){
@@ -150,10 +153,10 @@ export function App() {
 
             {notesState
                 .notes
-                .map((note: { rotate: any; id: React.Key | null | undefined; text: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; }) => (
+                .map((note: { rotate: Number; id: React.Key; text: string, position: [Number, Number] }) => (
                     <div className="note"
-                        style={{ transform: `rotate(${note.rotate}deg)` }}
-                        onDragEnd={dropNote}
+                        style={{ transform: `rotate(${note.rotate}deg)` }}                                       
+                        onDragEnd={(event) => dropNote(event, note)}
                         draggable="true"
                         onDoubleClick={startEditing}
                         id={note.id?.toString()}
