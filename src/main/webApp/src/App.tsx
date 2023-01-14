@@ -1,8 +1,9 @@
 import { BiEdit, BiXCircle } from "react-icons/bi";
-import React, { useState, useReducer } from 'react';
+import React, { useState, useReducer, useEffect } from 'react';
 import './App.scss';
 import { v4 as uuid } from 'uuid';
-import { nodeModuleNameResolver, updateUnionTypeNode } from 'typescript';
+import axios from "axios";
+import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 
 const initialNotesState = {
     lastNoteCreated: null,
@@ -19,16 +20,37 @@ const notesReducer = (prevState: any, action: any) => {
                 lastNoteCreated: new Date().toTimeString().slice(0, 8),
             };
             console.log('After ADD_NOTE: ', newState);
+
+            axios.post(`http://localhost:8080/api/notes/`, {
+                id: action.payload.id,
+                contents: action.payload.text
+            })
+            .then(res => {
+                console.log(res);
+                console.log(res.data)
+            })
+            .catch(err => {
+                console.log(err)
+            });
+
             return newState;
         }
 
         case 'DELETE_NOTE': {
+
+            axios.delete(`http://localhost:8080/api/notes/${action.payload.id}`)
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+            })
+
             const newState = {
                 ...prevState,
                 notes: prevState.notes.filter((note: { id: any; }) => note.id !== action.payload.id),
                 totalNotes: prevState.notes.length - 1,
             };
-            // console.log('After DELETE_NOTE: ', newState);
+            // console.log('After DELETE_NOTE: ', newState);          
+
             return newState;
         }
 
@@ -43,8 +65,16 @@ const notesReducer = (prevState: any, action: any) => {
 };
 
 export function App() {
+    useEffect(() => {
+        axios.get(`http://localhost:8080/api/notes`)
+        .then(res => {
+            console.log("Data from get" ,res.data);
+        })
+    }, []);
+
     const [notesState, dispatch] = useReducer(notesReducer, initialNotesState);
     const [noteInput, setNoteInput] = useState('');
+
 
     const addNote = (event: { preventDefault: () => void; }) => {
         event.preventDefault();
