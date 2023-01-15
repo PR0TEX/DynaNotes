@@ -23,7 +23,9 @@ const notesReducer = (prevState: any, action: any) => {
 
             axios.post(`http://localhost:8080/api/notes/`, {
                 id: action.payload.id,
-                contents: action.payload.text
+                contents: action.payload.text,
+                xcoord: action.payload.position[0],
+                ycoord: action.payload.position[1]
             })
             .then(res => {
                 console.log(res);
@@ -57,6 +59,11 @@ const notesReducer = (prevState: any, action: any) => {
         case 'EDIT_NOTE': {
             //changing internal note text
             prevState.notes.filter((note: { id: any; }) => note.id === action.payload.id)[0].text="test";
+
+            axios.patch(`http://localhost:8080/api/notes/${action.payload.id}`,{
+                contents: action.payload.text
+            })
+            .catch(err => console.log(err))
 
             // console.log('After EDIT_NOTE: ', prevState);
             return prevState;
@@ -158,7 +165,7 @@ export function App() {
         else{
             let textarea = document.createElement("textarea");
             textarea.value = pre.innerHTML;
-            textarea.className = "editBox";
+            textarea.className = "editBox";            
 
             note.removeChild(pre);
             note.appendChild(textarea);
