@@ -26,6 +26,13 @@ public class Note {
         this.ycoord = 0;
     }
 
+    public Note(String id, String contents) {
+        this.id = id;
+        this.contents = contents;
+        this.xcoord = 0;
+        this.ycoord = 0;
+    }
+
     public Note(String contents, int xcoord, int ycoord) {
         this.contents = contents;
         this.xcoord = xcoord;

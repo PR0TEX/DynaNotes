@@ -8,8 +8,10 @@ import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,6 +24,7 @@ import pl.edu.pg.projektGrupowy.DynaNotes.service.NoteService;
 
 @RestController
 @RequestMapping("/api/notes")
+@CrossOrigin(origins = "http://localhost:3000/")
 @AllArgsConstructor
 public class NoteController {
 
@@ -52,6 +55,18 @@ public class NoteController {
         Optional<Note> note = noteService.findById(id);
         if (note.isPresent()) {
             noteService.deleteById(id);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Note> updateNote(@RequestBody Note noteDetails, @PathVariable String id) {
+        Optional<Note> note = noteService.findById(id);
+        if (note.isPresent()) {
+            note.get().setContents(noteDetails.getContents());
+            noteService.update(note.get());
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();
