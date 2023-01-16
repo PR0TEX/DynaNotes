@@ -29,7 +29,7 @@ dependencies {
 	implementation 'org.springframework.data:spring-data-rest-core:4.0.0'
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb:3.0.1'
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
-
+	
 }
 
 tasks.named('test') {

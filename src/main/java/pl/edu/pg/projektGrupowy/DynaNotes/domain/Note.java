@@ -4,6 +4,7 @@ package pl.edu.pg.projektGrupowy.DynaNotes.domain;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.annotation.Id;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import javax.persistence.GeneratedValue;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Document("notes")
 public class Note {
     

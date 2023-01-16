@@ -21,7 +21,7 @@ const notesReducer = (prevState: any, action: any) => {
             };
             console.log('After ADD_NOTE: ', newState);
 
-            axios.post(`http://localhost:8080/api/notes/`, {
+            axios.post(`http://localhost:8080/api/notes`, {
                 id: action.payload.id,
                 contents: action.payload.text,
                 xcoord: action.payload.position[0],
