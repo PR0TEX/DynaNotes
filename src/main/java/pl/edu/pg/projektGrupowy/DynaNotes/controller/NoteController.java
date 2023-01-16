@@ -23,6 +23,7 @@ import pl.edu.pg.projektGrupowy.DynaNotes.domain.Note;
 import pl.edu.pg.projektGrupowy.DynaNotes.service.NoteService;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/notes")
 @AllArgsConstructor
 public class NoteController {
@@ -49,7 +50,6 @@ public class NoteController {
             .body(result); 
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteNote(@PathVariable String id) {
         Optional<Note> note = noteService.findById(id);
