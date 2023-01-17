@@ -6,7 +6,7 @@ import axios from "axios";
 import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 
 const initialNotesState = {
-    lastNoteCreated: null,
+    lastNoteCreated: "",
     totalNotes: 0,
     notes: [],
 };
@@ -14,6 +14,7 @@ const initialNotesState = {
 const notesReducer = (prevState: any, action: any) => {
     switch (action.type) {
         case 'ADD_NOTE': {
+            console.log('prev state in add', prevState)
             const newState = { 
                 notes: [...prevState.notes, action.payload],
                 totalNotes: prevState.notes.length + 1,
@@ -23,13 +24,13 @@ const notesReducer = (prevState: any, action: any) => {
 
             axios.post(`http://localhost:8080/api/notes`, {
                 id: action.payload.id,
-                contents: action.payload.text,
+                contents: action.payload.contents,
                 xcoord: action.payload.position[0],
                 ycoord: action.payload.position[1]
             })
             .then(res => {
-                console.log(res);
-                console.log(res.data)
+                // console.log(res);
+                // console.log(res.data)
             })
             .catch(err => {
                 console.log(err)
@@ -57,11 +58,11 @@ const notesReducer = (prevState: any, action: any) => {
         }
 
         case 'EDIT_NOTE': {
-            //changing internal note text
-            prevState.notes.filter((note: { id: any; }) => note.id === action.payload.id)[0].text="test";
+            //changing internal note contents
+            prevState.notes.filter((note: { id: any; }) => note.id === action.payload.id)[0].contents="test";
 
             axios.patch(`http://localhost:8080/api/notes/${action.payload.id}`,{
-                contents: action.payload.text
+                contents: action.payload.contents
             })
             .catch(err => console.log(err))
 
@@ -75,10 +76,16 @@ export function App() {
     useEffect(() => {
         axios.get(`http://localhost:8080/api/notes`)
         .then(res => {
-            console.log("Data from get" ,res.data);
+            
+            initialNotesState["notes"] = res.data;
+            initialNotesState["totalNotes"] = res.data.length ;
+            initialNotesState["lastNoteCreated"] = new Date().toTimeString().slice(0, 8); // TODO delete this variable
+            // TODO display notes
+            // console.log('Initial notes state', initialNotesState)
         })
     }, []);
 
+    console.log('Initial notes state', initialNotesState)
     const [notesState, dispatch] = useReducer(notesReducer, initialNotesState);
     const [noteInput, setNoteInput] = useState('');
 
@@ -91,7 +98,7 @@ export function App() {
 
         const newNote = {
             id: uuid(),
-            text: noteInput,
+            contents: noteInput,
             rotate: Math.floor(Math.random() * 20),
             position: [0, 0]
         }
@@ -125,7 +132,7 @@ export function App() {
 
             let pre = document.createElement("pre");
 
-            pre.className = "text";
+            pre.className = "contents";
             pre.innerHTML = textarea.value;
 
             note.removeChild(textarea);
@@ -151,7 +158,7 @@ export function App() {
             let pre = document.createElement("pre");
             let textarea = note.getElementsByTagName("textarea")[0];
 
-            pre.className = "text"
+            pre.className = "contents"
             pre.innerHTML = textarea.value;
 
             note.removeChild(textarea);
@@ -190,7 +197,7 @@ export function App() {
 
             {notesState
                 .notes
-                .map((note: { rotate: Number; id: React.Key; text: string, position: [Number, Number] }) => (
+                .map((note: { rotate: Number; id: React.Key; contents: string, position: [Number, Number] }) => (
                     <div className="note"
                         style={{ transform: `rotate(${note.rotate}deg)` }}                                       
                         onDragEnd={(event) => dropNote(event, note)}
@@ -209,7 +216,7 @@ export function App() {
                             <BiEdit/>
                         </div>
 
-                        <pre className="text">{note.text}</pre>
+                        <pre className="contents">{note.contents}</pre>
                     </div>
                 ))
             }
