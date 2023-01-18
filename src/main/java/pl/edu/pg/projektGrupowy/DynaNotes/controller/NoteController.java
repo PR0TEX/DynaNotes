@@ -66,6 +66,7 @@ public class NoteController {
         Optional<Note> note = noteService.findById(id);
         if (note.isPresent()) {
             note.get().setContents(noteDetails.getContents());
+            note.get().setPosition(noteDetails.getPosition());
             noteService.update(note.get());
             return ResponseEntity.ok().build();
         } else {

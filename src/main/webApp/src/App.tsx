@@ -25,8 +25,7 @@ const notesReducer = (prevState: any, action: any) => {
             axios.post(`http://localhost:8080/api/notes`, {
                 id: action.payload.id,
                 contents: action.payload.contents,
-                xcoord: action.payload.position[0],
-                ycoord: action.payload.position[1]
+                position: action.payload.position
             })
             .then(res => {
                 // console.log(res);
@@ -59,10 +58,11 @@ const notesReducer = (prevState: any, action: any) => {
 
         case 'EDIT_NOTE': {
             //changing internal note contents
-            prevState.notes.filter((note: { id: any; }) => note.id === action.payload.id)[0].contents="test";
+            // prevState.notes.filter((note: { id: any; }) => note.id === action.payload.id)[0].contents="test";
 
             axios.patch(`http://localhost:8080/api/notes/${action.payload.id}`,{
-                contents: action.payload.contents
+                contents: action.payload.contents,
+                position: action.payload.position
             })
             .catch(err => console.log(err))
 
@@ -118,6 +118,7 @@ export function App() {
         // console.log('note', note)
         event.target.style.left = `${event.pageX - 50}px`;
         event.target.style.top = `${event.pageY - 50}px`;
+        dispatch({ type: 'EDIT_NOTE', payload: note });
     };
 
     //TODO save and end all edits
@@ -199,7 +200,8 @@ export function App() {
                 .notes
                 .map((note: { rotate: Number; id: React.Key; contents: string, position: [Number, Number] }) => (
                     <div className="note"
-                        style={{ transform: `rotate(${note.rotate}deg)` }}                                       
+                        style={{ transform: `rotate(${note.rotate}deg)`,
+                            left: note.position[0] as number - 50, top: note.position[1] as number - 50}}                                       
                         onDragEnd={(event) => dropNote(event, note)}
                         draggable="true"
                         onDoubleClick={startEditing}
