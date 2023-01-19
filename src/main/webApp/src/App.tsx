@@ -121,52 +121,33 @@ export function App() {
         dispatch({ type: 'EDIT_NOTE', payload: note });
     };
 
-    //TODO save and end all edits
-    const endEdit = (event: any) => {
-        event.preventDefault();
-        
-        let elems = Array.from(document.getElementsByTagName("textarea"));
+    const editNote = (event: any, note: any) => {
+        console.log("edit: ", event)
+        console.log("note", note)
 
-        elems.forEach(textarea => {
-            let note = textarea.parentElement;
-            if(note === null || note === undefined || note.className !== "note") return;
-
-            let pre = document.createElement("pre");
-
-            pre.className = "contents";
-            pre.innerHTML = textarea.value;
-
-            note.removeChild(textarea);
-            note.appendChild(pre);
-
-            //update note
-        });
-    }
-
-    const startEditing = (event: any) =>{
-
-        //find note element
-        let note = event.target;
-        while(note.className !== "note"){
-            note = note.parentElement;
+        //find noteDOM element
+        let noteDOM = event.target;
+        while(noteDOM.className !== "note"){
+            noteDOM = noteDOM.parentElement;
         }
 
-        let pre = note.getElementsByTagName("pre")[0];
+        let pre = noteDOM.getElementsByTagName("pre")[0];
         // console.log(pre)
 
         //end editing
         if(pre === undefined || pre === null){
             let pre = document.createElement("pre");
-            let textarea = note.getElementsByTagName("textarea")[0];
+            let textarea = noteDOM.getElementsByTagName("textarea")[0];
 
             pre.className = "contents"
             pre.innerHTML = textarea.value;
+            note.contents = textarea.value;
 
-            note.removeChild(textarea);
-            note.appendChild(pre);
+            noteDOM.removeChild(textarea);
+            noteDOM.appendChild(pre);
 
             //update note state
-            //dispatch({ type: 'UPDATE_NOTE', payload: })
+            dispatch({ type: 'EDIT_NOTE', payload: note });
         }
 
         //start editing
@@ -175,10 +156,9 @@ export function App() {
             textarea.value = pre.innerHTML;
             textarea.className = "editBox";            
 
-            note.removeChild(pre);
-            note.appendChild(textarea);
+            noteDOM.removeChild(pre);
+            noteDOM.appendChild(textarea);
         }
-        
     }
 
     return (
@@ -204,7 +184,7 @@ export function App() {
                             left: note.position[0] as number - 50, top: note.position[1] as number - 50}}                                       
                         onDragEnd={(event) => dropNote(event, note)}
                         draggable="true"
-                        onDoubleClick={startEditing}
+                        onDoubleClick={(event) => {editNote(event, note)}}
                         id={note.id?.toString()}
                         key={note.id}>
 
@@ -213,7 +193,7 @@ export function App() {
                             <BiXCircle />
                         </div>
 
-                        <div onClick={startEditing}
+                        <div onClick={(event) => {editNote(event, note)}}
                             className="edit">
                             <BiEdit/>
                         </div>
