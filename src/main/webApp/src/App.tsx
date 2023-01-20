@@ -3,7 +3,6 @@ import React, { useState, useReducer, useEffect } from 'react';
 import './App.scss';
 import { v4 as uuid } from 'uuid';
 import axios from "axios";
-import { Switch } from "./components/Switch";
 
 const initialNotesState = {
     totalNotes: 0,
@@ -201,7 +200,6 @@ export function App() {
         }
         
     }
-
 
     return (
         <div className="app" onDragOver={dragOver}>
