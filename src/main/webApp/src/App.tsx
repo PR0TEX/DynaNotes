@@ -18,15 +18,16 @@ const notesReducer = (prevState: any, action: any) => {
                 totalNotes: prevState.notes.length + 1,
             };
             console.log('After ADD_NOTE: ', newState);
-
+            
             axios.post(`http://localhost:8080/api/notes`, {
                 id: action.payload.id,
                 contents: action.payload.contents,
-                position: action.payload.position
+                color: action.payload.color,
+                position: action.payload.position,
             })
             .then(res => {
-                // console.log(res);
-                // console.log(res.data)
+                console.log("Post Response: ", res);
+                console.log('Post Response Data', res.data)
             })
             .catch(err => {
                 console.log(err)
@@ -59,11 +60,12 @@ const notesReducer = (prevState: any, action: any) => {
 
             axios.patch(`http://localhost:8080/api/notes/${action.payload.id}`,{
                 contents: action.payload.contents,
-                position: action.payload.position
+                position: action.payload.position,
+                color: action.payload.color,
             })
             .catch(err => console.log(err))
 
-            // console.log('After EDIT_NOTE: ', prevState);
+            console.log('After EDIT_NOTE: ', prevState);
             return prevState;
         }
     }
@@ -73,6 +75,7 @@ export function App() {
     useEffect(() => {
         axios.get(`http://localhost:8080/api/notes`)
         .then(res => {            
+            console.log('Get data:' ,res.data)
             initialNotesState["notes"] = res.data;
             initialNotesState["totalNotes"] = res.data.length ;
         })
@@ -188,6 +191,8 @@ export function App() {
                 colorPicker.style.background = color;
                 colorPicker.onclick = function() {
                     noteDOM.className = "note "+color;
+                    console.log('color note:', note)
+                    note.color = color;
                     dispatch({ type: 'EDIT_NOTE', payload: note });
                 }
                 colorSelector.appendChild(colorPicker);
