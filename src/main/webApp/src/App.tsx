@@ -6,7 +6,6 @@ import axios from "axios";
 import { Switch } from "./components/Switch";
 
 const initialNotesState = {
-    lastNoteCreated: "",
     totalNotes: 0,
     notes: [],
 };
@@ -18,7 +17,6 @@ const notesReducer = (prevState: any, action: any) => {
             const newState = { 
                 notes: [...prevState.notes, action.payload],
                 totalNotes: prevState.notes.length + 1,
-                lastNoteCreated: new Date().toTimeString().slice(0, 8),
             };
             console.log('After ADD_NOTE: ', newState);
 
@@ -79,7 +77,6 @@ export function App() {
             
             initialNotesState["notes"] = res.data;
             initialNotesState["totalNotes"] = res.data.length ;
-            initialNotesState["lastNoteCreated"] = new Date().toTimeString().slice(0, 8); // TODO delete this variable
             // TODO display notes
             // console.log('Initial notes state', initialNotesState)
         })
@@ -228,7 +225,6 @@ export function App() {
             </div>
             <h1>
                 Sticky Notes ({notesState.totalNotes})
-                <span>{notesState.notes.length ? `Last note created: ${notesState.lastNoteCreated}` : ' '}</span>
             </h1>
 
             <form className="note-form" onSubmit={addNote}>
