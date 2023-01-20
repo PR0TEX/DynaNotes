@@ -106,11 +106,11 @@ export function App() {
     }
 
     const dropNote = (event: any, note: any) => {
-        // console.log('DROP NOTE', event);        
+        console.log('DROP NOTE', event);        
         note.position = [event.clientX, event.clientY];
-        // console.log('note', note)
-        event.target.style.left = `${event.pageX - 50}px`;
-        event.target.style.top = `${event.pageY - 50}px`;
+        console.log('note', note)
+        event.target.style.left = `${event.pageX - 115}px`;
+        event.target.style.top = `${event.pageY - 25}px`;
         dispatch({ type: 'EDIT_NOTE', payload: note });
     };
 
