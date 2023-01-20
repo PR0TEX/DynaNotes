@@ -92,8 +92,7 @@ export function App() {
         const newNote = {
             id: uuid(),
             contents: noteInput,
-            rotate: Math.floor(Math.random() * 20),
-            position: [300, 175],
+            position: [300 + Math.random() * 150, 175 + Math.random() * 150],
             color: "yellow"
         }
 
@@ -233,9 +232,9 @@ export function App() {
 
             {notesState
                 .notes
-                .map((note: { rotate: Number; id: React.Key; contents: string, position: [Number, Number], color: string }) => (
+                .map((note: { id: React.Key; contents: string, position: [Number, Number], color: string }) => (
                     <div className={"note " +note.color }
-                        style={{ transform: `rotate(${note.rotate}deg)`,
+                        style={{ 
                             left: note.position[0] as number - 50, top: note.position[1] as number - 50}}                                       
                         onDragEnd={(event) => dropNote(event, note)}
                         draggable="true"
