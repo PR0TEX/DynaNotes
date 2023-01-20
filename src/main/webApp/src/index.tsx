@@ -6,7 +6,11 @@ import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
+  
 );
+
+document.getElementsByTagName('body')[0].className = "light";
+
 root.render(
   <React.StrictMode>
     <App />

@@ -1,4 +1,4 @@
-import { BiEdit, BiXCircle } from "react-icons/bi";
+import { BiEdit, BiPalette, BiXCircle } from "react-icons/bi";
 import React, { useState, useReducer, useEffect } from 'react';
 import './App.scss';
 import { v4 as uuid } from 'uuid';
@@ -100,7 +100,8 @@ export function App() {
             id: uuid(),
             contents: noteInput,
             rotate: Math.floor(Math.random() * 20),
-            position: [0, 0]
+            position: [0, 0],
+            color: "yellow"
         }
 
         dispatch({ type: 'ADD_NOTE', payload: newNote });
@@ -127,8 +128,13 @@ export function App() {
 
         //find noteDOM element
         let noteDOM = event.target;
-        while(noteDOM.className !== "note"){
+
+        while(noteDOM.getAttribute("class") === null || noteDOM.getAttribute("class").substring(0,4) != "note"){
             noteDOM = noteDOM.parentElement;
+            if(noteDOM == null) {
+                console.log("Error - cannot find note element")
+                return;
+            }
         }
 
         let pre = noteDOM.getElementsByTagName("pre")[0];
@@ -161,6 +167,50 @@ export function App() {
         }
     }
 
+    function displayColors(event: any, note: any) {
+        //find noteDOM element
+        let noteDOM = event.target;
+
+        while(noteDOM.getAttribute("class") === null || noteDOM.getAttribute("class").substring(0,4) != "note"){
+            noteDOM = noteDOM.parentElement;
+            if(noteDOM == null) {
+                console.log("Error - cannot find note element")
+                return;
+            }
+        }
+        
+        let colorSelector = noteDOM.getElementsByClassName("colorSelector")[0];
+
+        //show color selector
+        if(colorSelector === undefined || colorSelector === null){
+            let colorSelector = document.createElement("div"); 
+            colorSelector.className = "colorSelector";
+
+            let colors = ["yellow", "cyan", "green", "magenta", "orange", "purple"];
+
+            //
+            colorSelector.style.width = (5 + 18) * colors.length + 16 + "px";
+            
+            colors.forEach(color => {
+                let colorPicker = document.createElement("div");
+                colorPicker.className = "colorPicker";
+                colorPicker.style.background = color;
+                colorPicker.onclick = function() {
+                    noteDOM.className = "note "+color;
+                    dispatch({ type: 'EDIT_NOTE', payload: note });
+                }
+                colorSelector.appendChild(colorPicker);
+            });
+            noteDOM.appendChild(colorSelector)
+        }
+        //hide color selector
+        else{
+            noteDOM.removeChild(colorSelector);
+        }
+        
+    }
+
+
     return (
         <div className="app" onDragOver={dragOver}>
             <h1>
@@ -178,8 +228,8 @@ export function App() {
 
             {notesState
                 .notes
-                .map((note: { rotate: Number; id: React.Key; contents: string, position: [Number, Number] }) => (
-                    <div className="note"
+                .map((note: { rotate: Number; id: React.Key; contents: string, position: [Number, Number], color: string }) => (
+                    <div className={"note " +note.color }
                         style={{ transform: `rotate(${note.rotate}deg)`,
                             left: note.position[0] as number - 50, top: note.position[1] as number - 50}}                                       
                         onDragEnd={(event) => dropNote(event, note)}
@@ -190,18 +240,36 @@ export function App() {
 
                         <div onClick={() => dispatch({ type: 'DELETE_NOTE', payload: note })}
                             className="close">
-                            <BiXCircle />
+                            <BiXCircle title="Delete note"/>
                         </div>
 
                         <div onClick={(event) => {editNote(event, note)}}
                             className="edit">
-                            <BiEdit/>
+                            <BiEdit title="Edit note"/>
+                        </div>
+
+                        <div onClick={(event) => {displayColors(event, note)}}
+                            className="palette">
+                            <BiPalette title="Change color"/>
                         </div>
 
                         <pre className="contents">{note.contents}</pre>
                     </div>
                 ))
             }
+
+            
+
+            <button className="toggleDarkLight" onClick={
+                function (){
+                    let body = document.getElementsByTagName("body")[0];
+                    if(body.className === "light")body.className = "dark";
+                    else body.className = "light";
+                }
+            }>
+                Toggle Dark/Light mode
+            </button>
+
         </div>
     );
 }

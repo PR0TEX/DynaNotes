@@ -5,11 +5,24 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-image:
-    linear-gradient(0deg, rgb(230, 230, 230) 5%, transparent 15%), /* first percentage value - line width */
-    linear-gradient(90deg, rgb(230, 230, 230) 5%, transparent 15%);
   background-size:50px 50px; /* Size of squares */
   background-position:0 0, 12.5px 0, 12.5px -12.5px, 0px 12.5px; /* Must be half of one side of the square */
+}
+
+.dark{
+  background-color: rgb(50,50,50);
+  background-image:
+    linear-gradient(0deg, rgb(65, 65, 65) 5%, transparent 10%), /* first percentage value - line width */
+    linear-gradient(90deg, rgb(65, 65, 65) 5%, transparent 10%);
+  color: white;
+}
+
+.light{
+  background-color: rgb(220,220,220);
+  background-image:
+    linear-gradient(0deg, rgb(180, 180, 180) 5%, transparent 10%), /* first percentage value - line width */
+    linear-gradient(90deg, rgb(180, 180, 180) 5%, transparent 10%);
+  color: black;
 }
 
 code {

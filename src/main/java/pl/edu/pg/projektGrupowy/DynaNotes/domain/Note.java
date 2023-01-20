@@ -20,11 +20,13 @@ public class Note {
     private String id;
     private String contents;
     private int position[];
+    private String color;
 
     public Note(String contents) {
         this.contents = contents;
         this.position[0] = 0;
         this.position[1] = 0;
+        this.color = "yellow";
     }
 
     public Note(String id, String contents) {
@@ -32,10 +34,12 @@ public class Note {
         this.contents = contents;
         this.position[0] = 0;
         this.position[1] = 0;
+        this.color = "yellow";
     }
 
     public Note(String contents, int[] position) {
         this.contents = contents;
         this.position = position;
+        this.color = "yellow";
     }
 }
