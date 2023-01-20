@@ -73,16 +73,12 @@ const notesReducer = (prevState: any, action: any) => {
 export function App() {
     useEffect(() => {
         axios.get(`http://localhost:8080/api/notes`)
-        .then(res => {
-            
+        .then(res => {            
             initialNotesState["notes"] = res.data;
             initialNotesState["totalNotes"] = res.data.length ;
-            // TODO display notes
-            // console.log('Initial notes state', initialNotesState)
         })
     }, []);
 
-    console.log('Initial notes state', initialNotesState)
     const [notesState, dispatch] = useReducer(notesReducer, initialNotesState);
     const [noteInput, setNoteInput] = useState('');
 
@@ -97,7 +93,7 @@ export function App() {
             id: uuid(),
             contents: noteInput,
             rotate: Math.floor(Math.random() * 20),
-            position: [0, 0],
+            position: [300, 175],
             color: "yellow"
         }
 
