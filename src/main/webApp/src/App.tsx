@@ -3,7 +3,7 @@ import React, { useState, useReducer, useEffect } from 'react';
 import './App.scss';
 import { v4 as uuid } from 'uuid';
 import axios from "axios";
-import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
+import { Switch } from "./components/Switch";
 
 const initialNotesState = {
     lastNoteCreated: "",
@@ -129,7 +129,7 @@ export function App() {
         //find noteDOM element
         let noteDOM = event.target;
 
-        while(noteDOM.getAttribute("class") === null || noteDOM.getAttribute("class").substring(0,4) != "note"){
+        while(noteDOM.getAttribute("class") === null || noteDOM.getAttribute("class").substring(0,4) !== "note"){
             noteDOM = noteDOM.parentElement;
             if(noteDOM == null) {
                 console.log("Error - cannot find note element")
@@ -171,7 +171,7 @@ export function App() {
         //find noteDOM element
         let noteDOM = event.target;
 
-        while(noteDOM.getAttribute("class") === null || noteDOM.getAttribute("class").substring(0,4) != "note"){
+        while(noteDOM.getAttribute("class") === null || noteDOM.getAttribute("class").substring(0,4) !== "note"){
             noteDOM = noteDOM.parentElement;
             if(noteDOM == null) {
                 console.log("Error - cannot find note element")
@@ -213,6 +213,19 @@ export function App() {
 
     return (
         <div className="app" onDragOver={dragOver}>
+            <div className="container-switch">
+                <span>Change Theme </span>
+                <label className="switch">
+                    <input type="checkbox"  onClick={
+                function (){
+                    let body = document.getElementsByTagName("body")[0];
+                    if(body.className === "light")body.className = "dark";
+                    else body.className = "light";
+                }
+            }/>
+                    <span className="slider"></span>
+                </label>
+            </div>
             <h1>
                 Sticky Notes ({notesState.totalNotes})
                 <span>{notesState.notes.length ? `Last note created: ${notesState.lastNoteCreated}` : ' '}</span>
@@ -257,19 +270,6 @@ export function App() {
                     </div>
                 ))
             }
-
-            
-
-            <button className="toggleDarkLight" onClick={
-                function (){
-                    let body = document.getElementsByTagName("body")[0];
-                    if(body.className === "light")body.className = "dark";
-                    else body.className = "light";
-                }
-            }>
-                Toggle Dark/Light mode
-            </button>
-
         </div>
     );
 }
