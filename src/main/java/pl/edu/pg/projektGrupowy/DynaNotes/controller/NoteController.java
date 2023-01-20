@@ -67,6 +67,7 @@ public class NoteController {
         if (note.isPresent()) {
             note.get().setContents(noteDetails.getContents());
             note.get().setPosition(noteDetails.getPosition());
+            note.get().setColor(noteDetails.getColor());
             noteService.update(note.get());
             return ResponseEntity.ok().build();
         } else {
