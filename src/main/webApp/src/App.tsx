@@ -189,8 +189,8 @@ export function App() {
                 let colorPicker = document.createElement("div");
                 colorPicker.className = "colorPicker";
                 colorPicker.style.background = color;
-                colorPicker.onclick = function() {
-                    noteDOM.className = "note "+color;
+                colorPicker.onclick = function changeColor() {
+                    noteDOM.className = "note " + color;
                     console.log('color note:', note)
                     note.color = color;
                     dispatch({ type: 'EDIT_NOTE', payload: note });
