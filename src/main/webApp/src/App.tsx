@@ -71,7 +71,6 @@ const notesReducer = (prevState: any, action: any) => {
         }
     }
 };
-
 export function App() {
     useEffect(() => {
         axios.get(`http://localhost:8080/api/notes`)
@@ -112,6 +111,7 @@ export function App() {
         event.stopPropagation();
         event.preventDefault();
     }
+    
 
     const dropNote = (event: any, note: any) => {
         // console.log('DROP NOTE', event);        
@@ -219,11 +219,12 @@ export function App() {
             </h1>
 
             <form className="note-form" onSubmit={addNote}>
-                <textarea placeholder="Create a new note..." 
+                <textarea placeholder="Create a new note..."
+                    id="create_new_note"
                     value={noteInput}
                     onChange={event => setNoteInput(event.target.value)}>
                 </textarea>
-                <button type="submit">Add</button>
+                <button type="submit" id="add_note_button">Add</button>
             </form>
 
             {notesState
@@ -244,7 +245,8 @@ export function App() {
                         </div>
 
                         <div onClick={(event) => {editNote(event, note)}}
-                            className="edit">
+                            className="edit" id="note1_">
+
                             <BiEdit title="Edit note"/>
                         </div>
 
@@ -275,3 +277,4 @@ export function App() {
 }
 
 export default App;
+

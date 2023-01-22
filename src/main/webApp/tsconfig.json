@@ -20,6 +20,11 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
+  "typedocOptions": {
+    "entryPointStrategy": "expand",
+    "entryPoints": ["./src"],
+    "out": "docs"
+  },
   "include": [
     "src"
   ]
