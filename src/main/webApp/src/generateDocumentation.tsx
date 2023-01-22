@@ -1,3 +1,15 @@
+
+class Note{
+    id!: string;
+    contents!: string;
+    position!: number[];
+    color!: string;
+}
+
+class Event{
+
+}
+
 /**
  * Reducer z Reactowego Hooka useReduce. Wywoływany poprzez funkcję dispatch.
  * W zależności co dostanie w action zmienia globalną zmienną initialNotesState na podstawie prevState
@@ -5,19 +17,17 @@
  * @param action - wartość w zależności od której wybieramy co zrboić
  * @returns nowa wartość initialNotesState
  */
-export const notesReducer = (prevState: any, action: any) => {};
+export const notesReducer = (prevState: {totalNotes: number, notes: Array<Note>}, action: any) => {};
 
 /**
  * Funkcja dodająca nową karteczkę, wysyła żądanie dispatch która dodaje do globalnej zmiennej initialNotesState nową karteczkę.
  * @param {Event} event 
- * @param event 
  */
 export const addNote = (event: { preventDefault: () => void; }) => {};
 
 /**
  * Funkcja pozwalająca na przeciąganie elementów nad główną tablicą
  * @param {Event} event - wydarzenie (przeciągnięcie)
- * @param event - wydarzenie (przeciągnięcie)
  */
 export const dragOver = (event: { stopPropagation: () => void; preventDefault: () => void; }) => {};
 
@@ -26,10 +36,8 @@ export const dragOver = (event: { stopPropagation: () => void; preventDefault: (
  * Ustawia nową pozycję karteczki poprzez wykonanie funkcji dispatch.
  * @param {Event} event - wydarzenie (upuszczenie)
  * @param {Note} note - notatka którą upuszczamy
- * @param event - wydarzenie (upuszczenie)
- * @param note - notatka którą upuszczamy
  */
-export const dropNote = (event: any, note: any) => {};
+export const dropNote = (event: Event, note: Note) => {};
 
 /**
  * Funkcja zmieniająca zawartość notatki poprzez wykonanie funkcji dispatch.
@@ -38,14 +46,14 @@ export const dropNote = (event: any, note: any) => {};
  * @param event - wydarzenie (edytowanie)
  * @param note - notatka którą edytujemy
  */
-export const editNote = (event: any, note: any) => {};
+export const editNote = (event: Event, note: Note) => {};
 
 /**
  * Funkcja tworząca panel wyboru koloru karteczki
  * @param {Event} event - wydarzenie (edytowanie)
  * @param {Note} note - notatka, której kolor zmieniamy
  */
-export function displayColors(event: any, note: any) {};
+export function displayColors(event: Event, note: Note) {};
 
 /**
  * Funkcja zmieniająca kolor karteczki, do której przypisany jest panel wyboru koloru, poprzez funkcję dispatch.
@@ -60,12 +68,8 @@ export function toggleTheme() {};
 
 /**
  * Reprezentacja karteczki w aplikacji
- * @var {string} id - identyfikator kartki
- * @var {string} contents - treść kartki
- * @var {Array<int>} position - pozycja kartki na tablicy
- * @var {string} color - kolor kartki
  */
-export const Note = {
+export const Notes = {
     id: 0,
     contents: "text",
     position: [300 + Math.random() * 150, 175 + Math.random() * 150],
@@ -73,10 +77,9 @@ export const Note = {
 }
 
 /**
- * @var {Array<Note>} notes - tablica wszystkich istniejących karteczek
- * @var {int} totalNotes - całkowita ilość istniejących karteczek
+ * Reprezentacja stanu tablicy z karteczkami
  */
 export const initialNotesState = {
     totalNotes: 0,
-    notes: Array<typeof Note>,
+    notes: Array<Note>,
 };

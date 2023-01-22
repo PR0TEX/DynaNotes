@@ -1,8 +1,9 @@
 import { BiEdit, BiPalette, BiXCircle } from "react-icons/bi";
-import React, { useState, useReducer, useEffect } from 'react';
+import React, { useState, useReducer, useEffect, MouseEventHandler } from 'react';
 import './App.scss';
 import { v4 as uuid } from 'uuid';
 import axios from "axios";
+import { TypeOfExpression } from "typescript";
 
 const initialNotesState = {
     totalNotes: 0,
