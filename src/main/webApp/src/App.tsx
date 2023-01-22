@@ -212,7 +212,7 @@ export function App() {
                 <span>Change Theme </span>
                 <label className="switch">
                     <input type="checkbox"  onClick={
-                function (){
+                function toggleTheme(){
                     let body = document.getElementsByTagName("body")[0];
                     if(body.className === "light")body.className = "dark";
                     else body.className = "light";

@@ -20,6 +20,10 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
+  "typedocOptions": {
+    "entryPoints": ["src/generateDocumentation.tsx"],
+    "out": "../../../docs/ts"
+  },
   "include": [
     "src"
   ]
