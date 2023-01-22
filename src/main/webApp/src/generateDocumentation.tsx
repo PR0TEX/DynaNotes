@@ -9,28 +9,46 @@ export const notesReducer = (prevState: any, action: any) => {};
 
 /**
  * Funkcja dodająca nową karteczkę, wysyła żądanie dispatch która dodaje do globalnej zmiennej initialNotesState nową karteczkę.
+<<<<<<< HEAD
  * @param {Event} event 
+=======
+ * @param event 
+>>>>>>> d184954d3b69cbf1106a9499be23f71838c025c8
  */
 export const addNote = (event: { preventDefault: () => void; }) => {};
 
 /**
  * Funkcja pozwalająca na przeciąganie elementów nad główną tablicą
+<<<<<<< HEAD
  * @param {Event} event - wydarzenie (przeciągnięcie)
+=======
+ * @param event - wydarzenie (przeciągnięcie)
+>>>>>>> d184954d3b69cbf1106a9499be23f71838c025c8
  */
 export const dragOver = (event: { stopPropagation: () => void; preventDefault: () => void; }) => {};
 
 /**
  * Funkcja która jest wykonywana gdy użytkownik skończy przesuwanie (upuści karteczkę).
  * Ustawia nową pozycję karteczki poprzez wykonanie funkcji dispatch.
+<<<<<<< HEAD
  * @param {Event} event - wydarzenie (upuszczenie)
  * @param {Note} note - notatka którą upuszczamy
+=======
+ * @param event - wydarzenie (upuszczenie)
+ * @param note - notatka którą upuszczamy
+>>>>>>> d184954d3b69cbf1106a9499be23f71838c025c8
  */
 export const dropNote = (event: any, note: any) => {};
 
 /**
  * Funkcja zmieniająca zawartość notatki poprzez wykonanie funkcji dispatch.
+<<<<<<< HEAD
  * @param {Event} event - wydarzenie (edytowanie)
  * @param {Note} note - notatka którą edytujemy
+=======
+ * @param event - wydarzenie (edytowanie)
+ * @param note - notatka którą edytujemy
+>>>>>>> d184954d3b69cbf1106a9499be23f71838c025c8
  */
 export const editNote = (event: any, note: any) => {};
 
