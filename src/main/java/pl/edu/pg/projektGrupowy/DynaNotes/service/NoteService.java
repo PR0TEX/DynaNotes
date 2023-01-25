@@ -30,6 +30,10 @@ public class NoteService {
         noteRepository.deleteById(id);
     }
 
+    public void deleteAll() {
+        noteRepository.deleteAll();
+    }
+
     public void update(Note note) {
         noteRepository.save(note);
     }

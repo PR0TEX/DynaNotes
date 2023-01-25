@@ -61,6 +61,12 @@ public class NoteController {
         }
     }
 
+    @DeleteMapping
+    public ResponseEntity<?> deleteAllNotes() {
+        noteService.deleteAll();
+        return ResponseEntity.ok().build();
+    }
+
     @PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Note> updateNote(@RequestBody Note noteDetails, @PathVariable String id) {
         Optional<Note> note = noteService.findById(id);
