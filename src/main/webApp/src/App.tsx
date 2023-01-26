@@ -1,11 +1,11 @@
-import React, { useState, useReducer } from 'react';
-import logo from './logo.svg';
+import { BiEdit, BiPalette, BiXCircle } from "react-icons/bi";
+import React, { useState, useReducer, useEffect, MouseEventHandler } from 'react';
 import './App.scss';
 import { v4 as uuid } from 'uuid';
-import { nodeModuleNameResolver, updateUnionTypeNode } from 'typescript';
+import axios from "axios";
+import { TypeOfExpression } from "typescript";
 
 const initialNotesState = {
-    lastNoteCreated: null,
     totalNotes: 0,
     notes: [],
 };
@@ -13,38 +13,77 @@ const initialNotesState = {
 const notesReducer = (prevState: any, action: any) => {
     switch (action.type) {
         case 'ADD_NOTE': {
+            console.log('prev state in add', prevState)
             const newState = { 
                 notes: [...prevState.notes, action.payload],
                 totalNotes: prevState.notes.length + 1,
-                lastNoteCreated: new Date().toTimeString().slice(0, 8),
             };
             console.log('After ADD_NOTE: ', newState);
+            
+            axios.post(`http://localhost:8080/api/notes`, {
+                id: action.payload.id,
+                contents: action.payload.contents,
+                color: action.payload.color,
+                position: action.payload.position,
+            })
+            .then(res => {
+                console.log("Post Response: ", res);
+                console.log('Post Response Data', res.data)
+            })
+            .catch(err => {
+                console.log(err)
+            });
+
             return newState;
         }
 
         case 'DELETE_NOTE': {
+
+            axios.delete(`http://localhost:8080/api/notes/${action.payload.id}`)
+            .then(res => {
+                console.log(res);
+                console.log(res.data);
+            })
+
             const newState = {
                 ...prevState,
                 notes: prevState.notes.filter((note: { id: any; }) => note.id !== action.payload.id),
                 totalNotes: prevState.notes.length - 1,
             };
-            console.log('After DELETE_NOTE: ', newState);
+            // console.log('After DELETE_NOTE: ', newState);          
+
             return newState;
         }
 
         case 'EDIT_NOTE': {
-            //changing internal note text
-            prevState.notes.filter((note: { id: any; }) => note.id === action.payload.id)[0].text="test";
+            //changing internal note contents
+            // prevState.notes.filter((note: { id: any; }) => note.id === action.payload.id)[0].contents="test";
+
+            axios.patch(`http://localhost:8080/api/notes/${action.payload.id}`,{
+                contents: action.payload.contents,
+                position: action.payload.position,
+                color: action.payload.color,
+            })
+            .catch(err => console.log(err))
 
             console.log('After EDIT_NOTE: ', prevState);
             return prevState;
         }
     }
 };
-
 export function App() {
+    useEffect(() => {
+        axios.get(`http://localhost:8080/api/notes`)
+        .then(res => {            
+            console.log('Get data:' ,res.data)
+            initialNotesState["notes"] = res.data;
+            initialNotesState["totalNotes"] = res.data.length ;
+        })
+    }, []);
+
     const [notesState, dispatch] = useReducer(notesReducer, initialNotesState);
     const [noteInput, setNoteInput] = useState('');
+
 
     const addNote = (event: { preventDefault: () => void; }) => {
         event.preventDefault();
@@ -54,8 +93,9 @@ export function App() {
 
         const newNote = {
             id: uuid(),
-            text: noteInput,
-            rotate: Math.floor(Math.random() * 20)
+            contents: noteInput,
+            position: [300 + Math.random() * 150, 175 + Math.random() * 150],
+            color: "yellow"
         }
 
         dispatch({ type: 'ADD_NOTE', payload: newNote });
@@ -66,115 +106,164 @@ export function App() {
         event.stopPropagation();
         event.preventDefault();
     }
+    
 
-    const dropNote = (event: any) => {
-        console.log(event);
-        event.target.style.left = `${event.pageX - 50}px`;
-        event.target.style.top = `${event.pageY - 50}px`;
+    const dropNote = (event: any, note: any) => {
+        console.log('DROP NOTE', event);        
+        note.position = [event.clientX, event.clientY];
+        console.log('note', note)
+        event.target.style.left = `${event.pageX - 115}px`;
+        event.target.style.top = `${event.pageY - 25}px`;
+        dispatch({ type: 'EDIT_NOTE', payload: note });
     };
 
-    //TODO save and end all edits
-    const endEdit = (event: any) => {
-        event.preventDefault();
-        
-        let elems = Array.from(document.getElementsByTagName("textarea"));
+    const editNote = (event: any, note: any) => {
+        console.log("edit: ", event)
+        console.log("note", note)
 
-        elems.forEach(textarea => {
-            let note = textarea.parentElement;
-            if(note === null || note === undefined || note.className !== "note") return;
+        //find noteDOM element
+        let noteDOM = event.target;
 
-            let pre = document.createElement("pre");
-
-            pre.className = "text";
-            pre.innerHTML = textarea.value;
-
-            note.removeChild(textarea);
-            note.appendChild(pre);
-
-            //update note
-        });
-    }
-
-    const startEditing = (event: any) =>{
-
-        //find note element
-        let note = event.target;
-        while(note.className !== "note"){
-            note = note.parentElement;
+        while(noteDOM.getAttribute("class") === null || noteDOM.getAttribute("class").substring(0,4) !== "note"){
+            noteDOM = noteDOM.parentElement;
+            if(noteDOM == null) {
+                console.log("Error - cannot find note element")
+                return;
+            }
         }
 
-        let pre = note.getElementsByTagName("pre")[0];
-        console.log(pre)
+        let pre = noteDOM.getElementsByTagName("pre")[0];
+        // console.log(pre)
 
         //end editing
         if(pre === undefined || pre === null){
             let pre = document.createElement("pre");
-            let textarea = note.getElementsByTagName("textarea")[0];
+            let textarea = noteDOM.getElementsByTagName("textarea")[0];
 
-            pre.className = "text"
+            pre.className = "contents"
             pre.innerHTML = textarea.value;
+            note.contents = textarea.value;
 
-            note.removeChild(textarea);
-            note.appendChild(pre);
+            noteDOM.removeChild(textarea);
+            noteDOM.appendChild(pre);
 
             //update note state
-            //dispatch({ type: 'UPDATE_NOTE', payload: })
+            dispatch({ type: 'EDIT_NOTE', payload: note });
         }
 
         //start editing
         else{
             let textarea = document.createElement("textarea");
             textarea.value = pre.innerHTML;
-            textarea.className = "editBox";
+            textarea.className = "editBox";            
 
-            note.removeChild(pre);
-            note.appendChild(textarea);
+            noteDOM.removeChild(pre);
+            noteDOM.appendChild(textarea);
+        }
+    }
+
+    function displayColors(event: any, note: any) {
+        //find noteDOM element
+        let noteDOM = event.target;
+
+        while(noteDOM.getAttribute("class") === null || noteDOM.getAttribute("class").substring(0,4) !== "note"){
+            noteDOM = noteDOM.parentElement;
+            if(noteDOM == null) {
+                console.log("Error - cannot find note element")
+                return;
+            }
+        }
+        
+        let colorSelector = noteDOM.getElementsByClassName("colorSelector")[0];
+
+        //show color selector
+        if(colorSelector === undefined || colorSelector === null){
+            let colorSelector = document.createElement("div"); 
+            colorSelector.className = "colorSelector";
+
+            let colors = ["yellow", "cyan", "green", "magenta", "orange", "purple"];
+
+            //
+            colorSelector.style.width = (5 + 18) * colors.length + 16 + "px";
+            
+            colors.forEach(color => {
+                let colorPicker = document.createElement("div");
+                colorPicker.className = "colorPicker";
+                colorPicker.style.background = color;
+                colorPicker.onclick = function changeColor() {
+                    noteDOM.className = "note " + color;
+                    console.log('color note:', note)
+                    note.color = color;
+                    dispatch({ type: 'EDIT_NOTE', payload: note });
+                }
+                colorSelector.appendChild(colorPicker);
+            });
+            noteDOM.appendChild(colorSelector)
+        }
+        //hide color selector
+        else{
+            noteDOM.removeChild(colorSelector);
         }
         
     }
 
     return (
         <div className="app" onDragOver={dragOver}>
+            <div className="container-switch">
+                <span>Change Theme </span>
+                <label className="switch">
+                    <input type="checkbox"  onClick={
+                function toggleTheme(){
+                    let body = document.getElementsByTagName("body")[0];
+                    if(body.className === "light")body.className = "dark";
+                    else body.className = "light";
+                }
+            }/>
+                    <span className="slider"></span>
+                </label>
+            </div>
             <h1>
                 Sticky Notes ({notesState.totalNotes})
-                <span>{notesState.notes.length ? `Last note created: ${notesState.lastNoteCreated}` : ' '}</span>
             </h1>
 
             <form className="note-form" onSubmit={addNote}>
-                <textarea placeholder="Create a new note..." 
+                <textarea placeholder="Create a new note..."
+                    id="create_new_note"
                     value={noteInput}
                     onChange={event => setNoteInput(event.target.value)}>
                 </textarea>
-                <button type="submit">Add</button>
+                <button type="submit" id="add_note_button">Add</button>
             </form>
 
             {notesState
                 .notes
-                .map((note: { rotate: any; id: React.Key | null | undefined; text: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; }) => (
-                    <div className="note"
-                        style={{ transform: `rotate(${note.rotate}deg)` }}
-                        onDragEnd={dropNote}
+                .map((note: { id: React.Key; contents: string, position: [Number, Number], color: string }) => (
+                    <div className={"note " +note.color }
+                        style={{ 
+                            left: note.position[0] as number - 50, top: note.position[1] as number - 50}}                                       
+                        onDragEnd={(event) => dropNote(event, note)}
                         draggable="true"
-                        onDoubleClick={startEditing}
+                        onDoubleClick={(event) => {editNote(event, note)}}
                         id={note.id?.toString()}
                         key={note.id}>
 
                         <div onClick={() => dispatch({ type: 'DELETE_NOTE', payload: note })}
                             className="close">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                            </svg>
+                            <BiXCircle title="Delete note"/>
                         </div>
 
-                        <div onClick={startEditing}
-                            className="edit">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#000000" strokeWidth="2" strokeLinecap="round">
-                                <path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"/>
-                                <polygon points="18 2 22 6 12 16 8 16 8 12 18 2"/>
-                            </svg>
+                        <div onClick={(event) => {editNote(event, note)}}
+                            className="edit" id="note1_">
+
+                            <BiEdit title="Edit note"/>
                         </div>
 
-                        <pre className="text">{note.text}</pre>
+                        <div onClick={(event) => {displayColors(event, note)}}
+                            className="palette">
+                            <BiPalette title="Change color"/>
+                        </div>
+
+                        <pre className="contents">{note.contents}</pre>
                     </div>
                 ))
             }
@@ -183,3 +272,4 @@ export function App() {
 }
 
 export default App;
+

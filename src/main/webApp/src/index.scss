@@ -1,0 +1,33 @@
+@import url('./styles/switch.scss');
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-size:50px 50px; /* Size of squares */
+  background-position:0 0, 12.5px 0, 12.5px -12.5px, 0px 12.5px; /* Must be half of one side of the square */
+}
+
+.dark{
+  background-color: rgb(50,50,50);
+  background-image:
+    linear-gradient(0deg, rgb(65, 65, 65) 5%, transparent 10%), /* first percentage value - line width */
+    linear-gradient(90deg, rgb(65, 65, 65) 5%, transparent 10%);
+  color: white;
+}
+
+.light{
+  background-color: rgb(220,220,220);
+  background-image:
+    linear-gradient(0deg, rgb(180, 180, 180) 5%, transparent 10%), /* first percentage value - line width */
+    linear-gradient(90deg, rgb(180, 180, 180) 5%, transparent 10%);
+  color: black;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}

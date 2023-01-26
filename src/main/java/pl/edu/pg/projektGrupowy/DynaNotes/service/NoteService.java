@@ -29,4 +29,12 @@ public class NoteService {
     public void deleteById(String id) {
         noteRepository.deleteById(id);
     }
+
+    public void deleteAll() {
+        noteRepository.deleteAll();
+    }
+
+    public void update(Note note) {
+        noteRepository.save(note);
+    }
 }
