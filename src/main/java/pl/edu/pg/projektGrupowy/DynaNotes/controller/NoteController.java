@@ -81,6 +81,14 @@ public class NoteController {
             return ResponseEntity.notFound().build();
         }
     }
+
+
+    @DeleteMapping
+    public ResponseEntity<?> deleteAllNotes() {
+        noteService.deleteAll();
+        return ResponseEntity.ok().build();
+    }
+
     /**
      * Umożliwia zmianę lokalizacji oraz zawartość karteczki znajdującej się na tablicy
      * @param noteDetails karteczka z nowymi danymi
@@ -93,6 +101,7 @@ public class NoteController {
         if (note.isPresent()) {
             note.get().setContents(noteDetails.getContents());
             note.get().setPosition(noteDetails.getPosition());
+            note.get().setColor(noteDetails.getColor());
             noteService.update(note.get());
             return ResponseEntity.ok().build();
         } else {

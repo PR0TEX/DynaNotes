@@ -21,9 +21,8 @@
     "jsx": "react-jsx"
   },
   "typedocOptions": {
-    "entryPointStrategy": "expand",
-    "entryPoints": ["./src"],
-    "out": "docs"
+    "entryPoints": ["src/generateDocumentation.tsx"],
+    "out": "../../../docs/ts"
   },
   "include": [
     "src"

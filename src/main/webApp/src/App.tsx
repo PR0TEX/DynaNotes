@@ -1,12 +1,11 @@
 import { BiEdit, BiPalette, BiXCircle } from "react-icons/bi";
-import React, { useState, useReducer, useEffect } from 'react';
+import React, { useState, useReducer, useEffect, MouseEventHandler } from 'react';
 import './App.scss';
 import { v4 as uuid } from 'uuid';
 import axios from "axios";
-import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
+import { TypeOfExpression } from "typescript";
 
 const initialNotesState = {
-    lastNoteCreated: "",
     totalNotes: 0,
     notes: [],
 };
@@ -18,18 +17,18 @@ const notesReducer = (prevState: any, action: any) => {
             const newState = { 
                 notes: [...prevState.notes, action.payload],
                 totalNotes: prevState.notes.length + 1,
-                lastNoteCreated: new Date().toTimeString().slice(0, 8),
             };
             console.log('After ADD_NOTE: ', newState);
-
+            
             axios.post(`http://localhost:8080/api/notes`, {
                 id: action.payload.id,
                 contents: action.payload.contents,
-                position: action.payload.position
+                color: action.payload.color,
+                position: action.payload.position,
             })
             .then(res => {
-                // console.log(res);
-                // console.log(res.data)
+                console.log("Post Response: ", res);
+                console.log('Post Response Data', res.data)
             })
             .catch(err => {
                 console.log(err)
@@ -62,11 +61,12 @@ const notesReducer = (prevState: any, action: any) => {
 
             axios.patch(`http://localhost:8080/api/notes/${action.payload.id}`,{
                 contents: action.payload.contents,
-                position: action.payload.position
+                position: action.payload.position,
+                color: action.payload.color,
             })
             .catch(err => console.log(err))
 
-            // console.log('After EDIT_NOTE: ', prevState);
+            console.log('After EDIT_NOTE: ', prevState);
             return prevState;
         }
     }
@@ -74,17 +74,13 @@ const notesReducer = (prevState: any, action: any) => {
 export function App() {
     useEffect(() => {
         axios.get(`http://localhost:8080/api/notes`)
-        .then(res => {
-            
+        .then(res => {            
+            console.log('Get data:' ,res.data)
             initialNotesState["notes"] = res.data;
             initialNotesState["totalNotes"] = res.data.length ;
-            initialNotesState["lastNoteCreated"] = new Date().toTimeString().slice(0, 8); // TODO delete this variable
-            // TODO display notes
-            // console.log('Initial notes state', initialNotesState)
         })
     }, []);
 
-    console.log('Initial notes state', initialNotesState)
     const [notesState, dispatch] = useReducer(notesReducer, initialNotesState);
     const [noteInput, setNoteInput] = useState('');
 
@@ -98,8 +94,7 @@ export function App() {
         const newNote = {
             id: uuid(),
             contents: noteInput,
-            rotate: Math.floor(Math.random() * 20),
-            position: [0, 0],
+            position: [300 + Math.random() * 150, 175 + Math.random() * 150],
             color: "yellow"
         }
 
@@ -114,11 +109,11 @@ export function App() {
     
 
     const dropNote = (event: any, note: any) => {
-        // console.log('DROP NOTE', event);        
+        console.log('DROP NOTE', event);        
         note.position = [event.clientX, event.clientY];
-        // console.log('note', note)
-        event.target.style.left = `${event.pageX - 50}px`;
-        event.target.style.top = `${event.pageY - 50}px`;
+        console.log('note', note)
+        event.target.style.left = `${event.pageX - 115}px`;
+        event.target.style.top = `${event.pageY - 25}px`;
         dispatch({ type: 'EDIT_NOTE', payload: note });
     };
 
@@ -129,7 +124,7 @@ export function App() {
         //find noteDOM element
         let noteDOM = event.target;
 
-        while(noteDOM.getAttribute("class") === null || noteDOM.getAttribute("class").substring(0,4) != "note"){
+        while(noteDOM.getAttribute("class") === null || noteDOM.getAttribute("class").substring(0,4) !== "note"){
             noteDOM = noteDOM.parentElement;
             if(noteDOM == null) {
                 console.log("Error - cannot find note element")
@@ -171,7 +166,7 @@ export function App() {
         //find noteDOM element
         let noteDOM = event.target;
 
-        while(noteDOM.getAttribute("class") === null || noteDOM.getAttribute("class").substring(0,4) != "note"){
+        while(noteDOM.getAttribute("class") === null || noteDOM.getAttribute("class").substring(0,4) !== "note"){
             noteDOM = noteDOM.parentElement;
             if(noteDOM == null) {
                 console.log("Error - cannot find note element")
@@ -195,8 +190,10 @@ export function App() {
                 let colorPicker = document.createElement("div");
                 colorPicker.className = "colorPicker";
                 colorPicker.style.background = color;
-                colorPicker.onclick = function() {
-                    noteDOM.className = "note "+color;
+                colorPicker.onclick = function changeColor() {
+                    noteDOM.className = "note " + color;
+                    console.log('color note:', note)
+                    note.color = color;
                     dispatch({ type: 'EDIT_NOTE', payload: note });
                 }
                 colorSelector.appendChild(colorPicker);
@@ -210,12 +207,23 @@ export function App() {
         
     }
 
-
     return (
         <div className="app" onDragOver={dragOver}>
+            <div className="container-switch">
+                <span>Change Theme </span>
+                <label className="switch">
+                    <input type="checkbox"  onClick={
+                function toggleTheme(){
+                    let body = document.getElementsByTagName("body")[0];
+                    if(body.className === "light")body.className = "dark";
+                    else body.className = "light";
+                }
+            }/>
+                    <span className="slider"></span>
+                </label>
+            </div>
             <h1>
                 Sticky Notes ({notesState.totalNotes})
-                <span>{notesState.notes.length ? `Last note created: ${notesState.lastNoteCreated}` : ' '}</span>
             </h1>
 
             <form className="note-form" onSubmit={addNote}>
@@ -229,9 +237,9 @@ export function App() {
 
             {notesState
                 .notes
-                .map((note: { rotate: Number; id: React.Key; contents: string, position: [Number, Number], color: string }) => (
+                .map((note: { id: React.Key; contents: string, position: [Number, Number], color: string }) => (
                     <div className={"note " +note.color }
-                        style={{ transform: `rotate(${note.rotate}deg)`,
+                        style={{ 
                             left: note.position[0] as number - 50, top: note.position[1] as number - 50}}                                       
                         onDragEnd={(event) => dropNote(event, note)}
                         draggable="true"
@@ -259,19 +267,6 @@ export function App() {
                     </div>
                 ))
             }
-
-            
-
-            <button className="toggleDarkLight" onClick={
-                function (){
-                    let body = document.getElementsByTagName("body")[0];
-                    if(body.className === "light")body.className = "dark";
-                    else body.className = "light";
-                }
-            }>
-                Toggle Dark/Light mode
-            </button>
-
         </div>
     );
 }
