@@ -3,6 +3,7 @@ services:
   mongodb:
     image: mongo
     container_name: mongodb
+    hostname: mongo
     ports:
       - 27017:27017
     volumes:
@@ -20,6 +21,36 @@ services:
       - ME_CONFIG_MONGODB_ADMINUSERNAME=rootuser
       - ME_CONFIG_MONGODB_ADMINPASSWORD=rootpass
       - ME_CONFIG_MONGODB_SERVER=mongodb
+    depends_on:
+      - mongodb
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: backend
+    container_name: backend
+    restart: on-failure
+    ports:
+      - 8080:8080
+    depends_on:
+      - mongodb
+    environment:
+      - SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE=admin
+      - SPRING_DATA_MONGODB_HOST = mongo
+      - SPRING_DATA_MONGODB_PORT=27017
+      - SPRING_DATA_MONGODB_USERNAME=rootuser
+      - SPRING_DATA_MONGODB_PASSWORD=rootpass
+      - SPRING_DATA_MONGODB_DATABASE=dynanotes
+  frontend:
+    build:
+      context: src/main/webApp
+      dockerfile: Dockerfile
+    image: frontend
+    container_name: frontend
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
 volumes:
   data: {}
 
