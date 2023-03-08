@@ -3,7 +3,8 @@ name: Publish containers
 on:
   push:
     branches:
-      - 'main'
+      # - 'main'
+      - 'dockerization'
 
 jobs:
   docker:
