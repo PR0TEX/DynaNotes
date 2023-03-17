@@ -1,3 +1,4 @@
+---
 name: Build containers
 
 on:
@@ -9,8 +10,6 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-       - name: Try to build docker containers
-       - uses: actions/checkout@v2
-
-       - run: |
-           docker-compose build
+      - uses: actions/checkout@v2
+      - run: |
+          docker-compose build
