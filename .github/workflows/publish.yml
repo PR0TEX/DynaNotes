@@ -1,10 +1,9 @@
-name: Publish containers
+name: Publish containers to repository
 
 on:
   push:
     branches:
-      # - 'main'
-      - 'dockerization'
+      - 'main'
 
 jobs:
   docker:
