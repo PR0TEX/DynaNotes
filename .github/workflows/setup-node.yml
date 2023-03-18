@@ -1,0 +1,26 @@
+---
+name: Setup NodeJS
+
+on:
+  push:
+    branches-ignore: [master, main]
+    # Remove the line above to run when pushing to master
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./src/main/webApp      
+    defaults:
+      run:
+        working-directory: ${{ env.working-directory }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: npm ci
+      - run: npm test
+

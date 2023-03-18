@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - run: echo $CR_PAT | docker login ghcr.io -u pr0tex --password-stdin
+      - run: echo "$CR_PAT" | docker login ghcr.io -u pr0tex --password-stdin
         env:
           CR_PAT: ${{ secrets.CR_PAT }}
       - run: |
