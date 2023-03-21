@@ -1,6 +1,6 @@
 target
 .gradle
-build/
+gradle
 .vscode
 bin
 src/main/webApp/docs
