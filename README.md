@@ -1,5 +1,5 @@
 # DynaNotes
-
+[![Known Vulnerabilities](https://snyk.io/test/github/pr0tex/dynanotes/badge.svg)](https://snyk.io/test/github/pr0tex/dynanotes)
 ## GROUP PROJECT AT GUT
 
 ### APP v1
