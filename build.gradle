@@ -8,7 +8,6 @@ plugins {
 group = 'pl.edu.pg.projektGrupowy'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
-sonar.
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
