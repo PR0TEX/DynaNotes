@@ -4,17 +4,28 @@ name: Publish containers to repository
 on:
   push:
     branches:
-      - 'main'
+      - branches: [main, sonarcloud]
 
 jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
       - run: echo "$CR_PAT" | docker login ghcr.io -u pr0tex --password-stdin
         env:
           CR_PAT: ${{ secrets.CR_PAT }}
       - run: |
           docker-compose build
           docker-compose push
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0  
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          CR_PAT: ${{ secrets.GITHUB_TOKEN }}  
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
