@@ -1,5 +1,6 @@
 # DynaNotes
-
+[![Known Vulnerabilities](https://snyk.io/test/github/pr0tex/dynanotes/badge.svg)](https://snyk.io/test/github/pr0tex/dynanotes)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
 ## GROUP PROJECT AT GUT
 
 ### APP v1
