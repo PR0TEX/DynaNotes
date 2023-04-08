@@ -6,7 +6,10 @@ COPY package.json ./
 COPY package-lock.json ./
 RUN npm ci --ignore-scripts
 RUN npm install react-scripts@3.4.1 -g
-COPY . ./
+COPY public ./public
+COPY src ./src
+COPY tsconfig.json ./
+COPY tsconfig.test.json ./
 RUN npm run build
 
 # production environment
