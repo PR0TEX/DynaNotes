@@ -5,7 +5,8 @@ plugins {
 }
 
 group = 'pl.edu.pg.projektGrupowy'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
+archivesBaseName = 'spring-boot-application'
 sourceCompatibility = '17'
 
 configurations {

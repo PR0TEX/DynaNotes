@@ -1,1 +1,1 @@
-FROM mongo:latest
+FROM mongo:6.0.5-jammy
