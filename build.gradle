@@ -5,7 +5,8 @@ plugins {
 }
 
 group = 'pl.edu.pg.projektGrupowy'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
+archivesBaseName = 'spring-boot-application'
 sourceCompatibility = '17'
 
 configurations {
@@ -20,7 +21,7 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
+	implementation 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
