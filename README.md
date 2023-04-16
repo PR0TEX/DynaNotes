@@ -20,3 +20,12 @@ To run java application without Docker container run the following command in th
 To run react application without Docker run the following commands in src/main/webApp directory:
 npm install
 npm start
+
+### Tests
+
+#### Chrome and selenium
+
+<!-- HOW TO RUN -->
+```bash
+"./gradlew cleanTest openTelemetryTest -PdynatraceUrl='${GUU_ADDRESS}' -PdynatraceService='${GUU_FRONTEND_SERVICE}' --info
+```

@@ -37,3 +37,11 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+task featuresTest(type: Test, dependsOn: testClasses) {
+    group 'selenium'
+    systemProperties = ['frontend.address': address]
+    include 'pl/edu/pg/projektGrupowy/DynaNotes/DynaNotesTest*'
+    outputs.upToDateWhen { false }
+    useJUnitPlatform()
+}

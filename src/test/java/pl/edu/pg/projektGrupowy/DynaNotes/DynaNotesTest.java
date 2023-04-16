@@ -40,7 +40,8 @@ class DynaNotesTest {
 	@BeforeEach
 	void setUp() {
 		driver = this.getChromeBrowser();
-		driver.get(System.getProperty("http://localhost:3000/"));
+		// driver.get(System.getProperty("http://localhost:3000/"));
+		driver.get(System.getProperty("frontend.address"));
 	}
 
 	@After
