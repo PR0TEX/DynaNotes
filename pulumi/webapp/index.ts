@@ -125,19 +125,6 @@ const rolePolicyAttachment_ebManagedUpdatesCustomer = new aws.iam.RolePolicyAtta
   }
 );
 
-// Create an EC2 security group
-const securityGroup = new aws.ec2.SecurityGroup("example-security-group", {
-  description: "Example EC2 security group for Elastic Beanstalk",
-  ingress: [
-      {
-          fromPort: 0,
-          toPort: 65535,
-          protocol: "tcp",
-          cidrBlocks: ["0.0.0.0/0"],
-      },
-  ],
-});
-
 // Create an Elastic Beanstalk environment for the application
 const env = new aws.elasticbeanstalk.Environment("my-env", {
     application: app.name,
@@ -146,12 +133,54 @@ const env = new aws.elasticbeanstalk.Environment("my-env", {
     settings: [
       { namespace: "aws:autoscaling:launchconfiguration", name: "IamInstanceProfile", value: instanceProfile.name },
       { namespace: "aws:autoscaling:launchconfiguration", name: "InstanceType", value: "t2.micro" },
-      { namespace: "aws:autoscaling:launchconfiguration", name: "SecurityGroups", value: securityGroup.name },
       { namespace: "aws:elasticbeanstalk:environment", name: "ServiceRole", value: ServiceRole.arn },
-      { namespace: "aws:elasticbeanstalk:environment", name: "EnvironmentType", value: "SingleInstance" },
+      { namespace: "aws:elasticbeanstalk:environment", name: "EnvironmentType", value: "LoadBalanced" },
       { namespace: "aws:elasticbeanstalk:healthreporting:system", name: "SystemType", value: "enhanced" },      
     ],
 });
 
-// Export the Elastic Beanstalk environment URL
+// Create a CloudFront Distribution
+const distribution = new aws.cloudfront.Distribution("my-cloudfront-distribution", {
+  enabled: true,
+  defaultCacheBehavior: {
+      targetOriginId: env.id,
+      viewerProtocolPolicy: "redirect-to-https",
+      allowedMethods: ["GET", "HEAD", "OPTIONS"],
+      cachedMethods: ["GET", "HEAD", "OPTIONS"],
+      forwardedValues: {
+        queryString: false,
+        cookies: {
+            forward: "none",
+        },
+    },
+  },
+  origins: [{
+      domainName: env.endpointUrl,
+      originId: env.id,
+      customOriginConfig: {
+          httpPort: 80,
+          httpsPort: 443,
+          originProtocolPolicy: "http-only",
+          originSslProtocols: ["TLSv1", "TLSv1.1", "TLSv1.2"],
+      },
+  }],
+  restrictions: {
+    geoRestriction: {
+        restrictionType: "whitelist",
+        locations: [
+            "US",
+            "CA",
+            "GB",
+            "DE",
+            "PL",
+        ],
+    },
+},
+  viewerCertificate: {
+    cloudfrontDefaultCertificate: true,
+},
+});
+
+// Export the Elastic Beanstalk environment URL and the CloudFront domain name
 export const endpointUrl = env.endpointUrl;
+export const cloudFrontDomain = distribution.domainName;
