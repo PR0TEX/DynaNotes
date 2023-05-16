@@ -3,7 +3,7 @@ import React, { useState, useReducer, useEffect, MouseEventHandler } from 'react
 import './App.scss';
 import { v4 as uuid } from 'uuid';
 import axios from "axios";
-import { TypeOfExpression } from "typescript";
+import { BASE_URL } from "./config";
 
 const initialNotesState = {
     totalNotes: 0,
@@ -20,7 +20,7 @@ const notesReducer = (prevState: any, action: any) => {
             };
             console.log('After ADD_NOTE: ', newState);
             
-            axios.post(`http://localhost:8080/api/notes`, {
+            axios.post(`${BASE_URL}/api/notes`, {
                 id: action.payload.id,
                 contents: action.payload.contents,
                 color: action.payload.color,
@@ -39,7 +39,7 @@ const notesReducer = (prevState: any, action: any) => {
 
         case 'DELETE_NOTE': {
 
-            axios.delete(`http://localhost:8080/api/notes/${action.payload.id}`)
+            axios.delete(`${BASE_URL}/api/notes/${action.payload.id}`)
             .then(res => {
                 console.log(res);
                 console.log(res.data);
@@ -59,7 +59,7 @@ const notesReducer = (prevState: any, action: any) => {
             //changing internal note contents
             // prevState.notes.filter((note: { id: any; }) => note.id === action.payload.id)[0].contents="test";
 
-            axios.patch(`http://localhost:8080/api/notes/${action.payload.id}`,{
+            axios.patch(`${BASE_URL}/api/notes/${action.payload.id}`,{
                 contents: action.payload.contents,
                 position: action.payload.position,
                 color: action.payload.color,
@@ -73,7 +73,7 @@ const notesReducer = (prevState: any, action: any) => {
 };
 export function App() {
     useEffect(() => {
-        axios.get(`http://localhost:8080/api/notes`)
+        axios.get(`${BASE_URL}/api/notes`)
         .then(res => {            
             console.log('Get data:' ,res.data)
             initialNotesState["notes"] = res.data;
