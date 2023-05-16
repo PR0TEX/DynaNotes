@@ -11,7 +11,7 @@ import com.mongodb.MongoClientSettings;
 public class DocumentDBConf {
 	
 	private MongoProperties properties;
-	
+	//test
 	public static final String KEY_STORE_TYPE = "./tmp/certs/rds-truststore.jks";
     	public static final String DEFAULT_KEY_STORE_PASSWORD = "<PASS>";
 
