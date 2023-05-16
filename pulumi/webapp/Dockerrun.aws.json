@@ -1,0 +1,15 @@
+{
+    "AWSEBDockerrunVersion": "1",
+    "Image": {
+      "Name": "ghcr.io/pr0tex/frontend:latest",
+      "Update": "true"
+    },
+    "Ports": [
+      {
+        "ContainerPort": "80",
+        "HostPort": "80"
+      }
+    ],
+    "Volumes": [],
+    "Logging": "/var/log/nginx"
+  }

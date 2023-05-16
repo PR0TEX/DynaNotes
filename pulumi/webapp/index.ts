@@ -5,10 +5,10 @@ import * as aws from "@pulumi/aws";
 const bucket = new aws.s3.Bucket("my-bucket");
 
 // Upload the web application zip file to the S3 bucket
-const webAppZipFile = new aws.s3.BucketObject("webapp.zip", {
+const webAppDocker = new aws.s3.BucketObject("Dockerrun.aws.json", {
     bucket: bucket.id,
-    key: "webapp.zip",
-    source: new pulumi.asset.FileAsset("webapp.zip"),
+    key: "Dockerrun.aws.json",
+    source: new pulumi.asset.FileAsset("Dockerrun.aws.json"),
 });
 
 const ebRole = new aws.iam.Role("ebRole", {assumeRolePolicy: JSON.stringify({
@@ -37,7 +37,7 @@ const app = new aws.elasticbeanstalk.Application("my-app", {
 const version = new aws.elasticbeanstalk.ApplicationVersion("my-version", {
     application: app,
     bucket: bucket.id,
-    key: webAppZipFile.id,
+    key: webAppDocker.id,
 });
 
 const instanceProfileRole = new aws.iam.Role("eb-ec2-role", {
@@ -129,7 +129,7 @@ const rolePolicyAttachment_ebManagedUpdatesCustomer = new aws.iam.RolePolicyAtta
 const env = new aws.elasticbeanstalk.Environment("my-env", {
     application: app.name,
     version: version,
-    solutionStackName: "64bit Amazon Linux 2 v5.8.1 running Node.js 18",
+    solutionStackName: "64bit Amazon Linux 2 v3.5.7 running Docker",
     settings: [
       { namespace: "aws:autoscaling:launchconfiguration", name: "IamInstanceProfile", value: instanceProfile.name },
       { namespace: "aws:autoscaling:launchconfiguration", name: "InstanceType", value: "t2.micro" },
