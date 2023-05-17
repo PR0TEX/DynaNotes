@@ -125,6 +125,8 @@ const rolePolicyAttachment_ebManagedUpdatesCustomer = new aws.iam.RolePolicyAtta
   }
 );
 
+const connectionString = "localhost:8000"
+
 // Create an Elastic Beanstalk environment for the application
 const env = new aws.elasticbeanstalk.Environment("my-env", {
     application: app.name,
@@ -135,7 +137,8 @@ const env = new aws.elasticbeanstalk.Environment("my-env", {
       { namespace: "aws:autoscaling:launchconfiguration", name: "InstanceType", value: "t2.micro" },
       { namespace: "aws:elasticbeanstalk:environment", name: "ServiceRole", value: ServiceRole.arn },
       { namespace: "aws:elasticbeanstalk:environment", name: "EnvironmentType", value: "LoadBalanced" },
-      { namespace: "aws:elasticbeanstalk:healthreporting:system", name: "SystemType", value: "enhanced" },      
+      { namespace: "aws:elasticbeanstalk:healthreporting:system", name: "SystemType", value: "enhanced" },  
+      { namespace: "aws:elasticbeanstalk:application:environment", name: `CONNECTION_STRING`, value: connectionString },    
     ],
 });
 
