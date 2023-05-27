@@ -3,9 +3,9 @@ import * as aws from "@pulumi/aws";
 import * as awsx from "@pulumi/awsx";
 
 // Fetch the default VPC information from your AWS account:
-// const vpc = new awsx.ec2.DefaultVpc("default-vpc");
+const vpc = new awsx.ec2.DefaultVpc("default-vpc");
 
-// // Create IAM role and instance profile for the EC2 instance
+// Create IAM role and instance profile for the EC2 instance
 const ecsInstanceRole = new aws.iam.Role("ecs-instance-role", {
   assumeRolePolicy: JSON.stringify({
       Version: "2012-10-17",
@@ -55,7 +55,6 @@ const foobar = new aws.ec2.LaunchTemplate("foobar", {
 });
 
 const autoscalingGroup = new aws.autoscaling.Group("my-autoscaling-group", {
-  availabilityZones: ["us-east-1a"],
   maxSize: 1,
   minSize: 1,
   desiredCapacity: 1,
@@ -64,7 +63,8 @@ const autoscalingGroup = new aws.autoscaling.Group("my-autoscaling-group", {
     id: foobar.id,
     version: "$Latest"
   },
-  // vpcZoneIdentifiers: vpc.publicSubnetIds,
+  // You need to specify new inbound rule in default security group to allow all traffic from port that backend is running on (ex. 8080)
+  vpcZoneIdentifiers: vpc.publicSubnetIds,
   tags: [{
     key: "AmazonECSManaged",
     value: "true",
@@ -118,27 +118,40 @@ const taskExecutionRolePolicy = new aws.iam.RolePolicy("taskExecutionRolePolicy"
 
 const taskDefinition = new aws.ecs.TaskDefinition("myTask", {
     family: "my-task",
-    // cpu: "256",
-    // memory: "512",
+    cpu: "256",
+    memory: "512",
     taskRoleArn: taskExecutionRole.arn,
     executionRoleArn: taskExecutionRole.arn,
-    // requiresCompatibilities: ["EC2"],
-    // networkMode: "awsvpc",
+    requiresCompatibilities: ["EC2"],
+    networkMode: "host",
     containerDefinitions: JSON.stringify([
         {
           name: "backend",
-          // image: "ghcr.io/pr0tex/backend:latest",
-          image: "nginx:latest",
-          memory: 256,
-          cpu: 128,      
+          image: "ghcr.io/pr0tex/backend:latest",
+          // image: "nginx:latest",   
           essential: true,      
           portMappings: [{
-            containerPort: 80,
-            hostPort: 80,
+            containerPort: 8080,
+            hostPort: 8080,
             protocol: "tcp"
           }],
+          environment: [
+            {"name" : "BACKEND_URL", "value" : "test"}
+          ]
         },
     ]),
+});
+
+const elb = new aws.elb.LoadBalancer("myLoadBalancer", {
+  subnets: vpc.publicSubnetIds,
+  listeners: [
+      {
+          instancePort: 8080,
+          instanceProtocol: "http",
+          lbPort: 8080,
+          lbProtocol: "http",
+      },
+  ],
 });
 
 const ecsService = new aws.ecs.Service("myService", {
@@ -147,7 +160,13 @@ const ecsService = new aws.ecs.Service("myService", {
     taskDefinition: taskDefinition.arn,
     desiredCount: 1,
     launchType: "EC2",
+    loadBalancers: [
+      {
+          containerName: "backend",
+          containerPort: 8080,
+          elbName: elb.name,
+      },
+  ],
 });
 
-export const clusterName = ecsCluster.id;
-export const serviceName = ecsService.id;
+export const loadBalancerUrl = elb.dnsName;
