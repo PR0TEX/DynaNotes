@@ -124,6 +124,15 @@ const documentDbSubnetGroup = new aws.docdb.SubnetGroup("documentdb-subnet-group
 const mongoUsername: string = "dyno";
 const mongoPassword: string = "dynodyno123"
 
+const clusterParameterGroup = new aws.docdb.ClusterParameterGroup("cluster-parameter-group", {
+  description: "docdb cluster parameter group",
+  family: "docdb4.0",
+  parameters: [{
+      name: "tls",
+      value: "disabled",
+  }],
+});
+
 const documentDbCluster = new aws.docdb.Cluster("documentdb-cluster", {
     clusterIdentifier: "my-documentdb-cluster",
     engine: "docdb",
@@ -134,6 +143,7 @@ const documentDbCluster = new aws.docdb.Cluster("documentdb-cluster", {
     skipFinalSnapshot: true,
     dbSubnetGroupName: documentDbSubnetGroup.name,
     backupRetentionPeriod: 7,
+    dbClusterParameterGroupName: clusterParameterGroup.name,
 });
 
 const myDocDBInstance = new aws.docdb.ClusterInstance("myDocDBInstance", {
@@ -141,8 +151,24 @@ const myDocDBInstance = new aws.docdb.ClusterInstance("myDocDBInstance", {
     instanceClass: "db.t3.medium",
   });
 
-// Get the endpoint of the DocumentDB cluster as an Output
-const clusterEndpoint = pulumi.interpolate `${documentDbCluster.endpoint}`.apply((input) => Buffer.from(input).toString());
+const containerDefinitions = pulumi.all([documentDbCluster.endpoint]).apply(([endpoint]) => JSON.stringify([
+  {
+    name: "backend",
+    image: "ghcr.io/pr0tex/backend:latest",
+    essential: true,
+    portMappings: [{
+      containerPort: 8080,
+      hostPort: 8080,
+      protocol: "tcp",
+    }],
+    environment: [
+      { name: "SPRING_DATA_MONGODB_HOST", value: endpoint },
+      { name: "SPRING_DATA_MONGODB_PORT", value: "27017" },
+      { name: "SPRING_DATA_MONGODB_USERNAME", value: mongoUsername },
+      { name: "SPRING_DATA_MONGODB_PASSWORD", value: mongoPassword },
+    ],
+  },
+]));
 
 const taskDefinition = new aws.ecs.TaskDefinition("myTask", {
     family: "my-task",
@@ -152,25 +178,7 @@ const taskDefinition = new aws.ecs.TaskDefinition("myTask", {
     executionRoleArn: taskExecutionRole.arn,
     requiresCompatibilities: ["EC2"],
     networkMode: "host",
-    containerDefinitions: JSON.stringify([
-        {
-          name: "backend",
-          image: "ghcr.io/pr0tex/backend:latest",
-          // image: "nginx:latest",   
-          essential: true,      
-          portMappings: [{
-            containerPort: 8080,
-            hostPort: 8080,
-            protocol: "tcp"
-          }],
-          environment: [
-            {name: "SPRING_DATA_MONGODB_HOST", value: clusterEndpoint},
-            {name: "SPRING_DATA_MONGODB_PORT", value: "27017"},
-            {name: "SPRING_DATA_MONGODB_USERNAME", value: mongoUsername},
-            {name: "SPRING_DATA_MONGODB_PASSWORD", value: mongoPassword}        
-          ]
-        },
-    ]),
+    containerDefinitions: containerDefinitions
 });
 
 const elb = new aws.elb.LoadBalancer("myLoadBalancer", {
