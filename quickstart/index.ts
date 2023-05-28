@@ -1,3 +1,4 @@
+
 import * as pulumi from "@pulumi/pulumi";
 import * as aws from "@pulumi/aws";
 import * as awsx from "@pulumi/awsx";
@@ -116,6 +117,33 @@ const taskExecutionRolePolicy = new aws.iam.RolePolicy("taskExecutionRolePolicy"
   },
 });
 
+const documentDbSubnetGroup = new aws.docdb.SubnetGroup("documentdb-subnet-group", {
+    subnetIds: vpc.publicSubnetIds,
+});
+
+const mongoUsername: string = "dyno";
+const mongoPassword: string = "dynodyno123"
+
+const documentDbCluster = new aws.docdb.Cluster("documentdb-cluster", {
+    clusterIdentifier: "my-documentdb-cluster",
+    engine: "docdb",
+    engineVersion: "4.0.0",
+    masterUsername: mongoUsername,
+    masterPassword: mongoPassword,
+    applyImmediately: true,
+    skipFinalSnapshot: true,
+    dbSubnetGroupName: documentDbSubnetGroup.name,
+    backupRetentionPeriod: 7,
+});
+
+const myDocDBInstance = new aws.docdb.ClusterInstance("myDocDBInstance", {
+    clusterIdentifier: documentDbCluster.id,
+    instanceClass: "db.t3.medium",
+  });
+
+// Get the endpoint of the DocumentDB cluster as an Output
+const clusterEndpoint = pulumi.interpolate `${documentDbCluster.endpoint}`.apply((input) => Buffer.from(input).toString());
+
 const taskDefinition = new aws.ecs.TaskDefinition("myTask", {
     family: "my-task",
     cpu: "256",
@@ -136,7 +164,10 @@ const taskDefinition = new aws.ecs.TaskDefinition("myTask", {
             protocol: "tcp"
           }],
           environment: [
-            {"name" : "BACKEND_URL", "value" : "test"}
+            {name: "SPRING_DATA_MONGODB_HOST", value: clusterEndpoint},
+            {name: "SPRING_DATA_MONGODB_PORT", value: "27017"},
+            {name: "SPRING_DATA_MONGODB_USERNAME", value: mongoUsername},
+            {name: "SPRING_DATA_MONGODB_PASSWORD", value: mongoPassword}        
           ]
         },
     ]),
