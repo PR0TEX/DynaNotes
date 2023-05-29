@@ -53,8 +53,6 @@ services:
     build:
       context: src/main/webApp
       dockerfile: Dockerfile
-      args:
-        REACT_APP_BACKEND_URL: ${REACT_APP_BACKEND_URL:-http://localhost:8080}
     container_name: frontend
     ports:
       - 3000:80
