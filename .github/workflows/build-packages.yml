@@ -4,7 +4,7 @@ name: Build containers
 on:
   pull_request:
     branches:
-      - 'main'
+      - 'main, old-webapp-dockerfile'
 
 jobs:
   docker:
