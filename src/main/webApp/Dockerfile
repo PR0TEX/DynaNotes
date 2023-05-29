@@ -10,7 +10,11 @@ COPY public ./public
 COPY src ./src
 COPY tsconfig.json ./
 COPY tsconfig.test.json ./
+ARG REACT_APP_BACKEND_URL="http://localhost:8080"
+RUN echo "REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL" > .env
 RUN npm run build
+
+
 
 # production environment
 FROM nginx:stable-alpine
