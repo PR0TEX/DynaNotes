@@ -1,0 +1,10 @@
+config:
+  dynatrace:backendPort: "8080"
+  dynatrace:database: cart
+  dynatrace:frontendPort: "80"
+  dynatrace:mongoHost: mongodb://mongo:27017
+  dynatrace:mongoPort: "27017"
+  dynatrace:nodeEnvironment: development
+  dynatrace:protocol: http://
+  gcp:project: dynanotes-v-1
+  gcp:region: europe-central2

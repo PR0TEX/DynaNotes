@@ -1,0 +1,13 @@
+{
+    "name": "dynatrace",
+    "main": "index.ts",
+    "devDependencies": {
+        "@types/node": "^16"
+    },
+    "dependencies": {
+        "@pulumi/docker": "^4.2.0",
+        "@pulumi/gcp": "^6.0.0",
+        "@pulumi/kubernetes": "^3.28.0",
+        "@pulumi/pulumi": "^3.0.0"
+    }
+}
