@@ -1,34 +1,6 @@
+---
 version: "3.8"
 services:
-  mongodb:
-    image: ghcr.io/pr0tex/mongo:latest
-    build:
-      context: .
-      dockerfile: ./dockerfiles/mongo.dockerfile
-    container_name: mongodb
-    hostname: mongo
-    ports:
-      - 27017:27017
-    volumes:
-      - data:/data
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=rootuser
-      - MONGO_INITDB_ROOT_PASSWORD=rootpass
-  mongo-express:
-    image: ghcr.io/pr0tex/mongo-express:latest
-    build: 
-      context: .
-      dockerfile: ./dockerfiles/mongo-express.dockerfile
-    container_name: mongo-express
-    restart: always
-    ports:
-      - 8081:8081
-    environment:
-      - ME_CONFIG_MONGODB_ADMINUSERNAME=rootuser
-      - ME_CONFIG_MONGODB_ADMINPASSWORD=rootpass
-      - ME_CONFIG_MONGODB_SERVER=mongodb
-    depends_on:
-      - mongodb
   backend:
     image: ghcr.io/pr0tex/backend:latest
     build:
@@ -38,8 +10,6 @@ services:
     restart: on-failure
     ports:
       - 8080:8080
-    depends_on:
-      - mongodb
     environment:
       - SPRING_DATA_MONGODB_AUTHENTICATION_DATABASE=admin
       - SPRING_DATA_MONGODB_HOST=mongo
@@ -54,12 +24,6 @@ services:
       dockerfile: Dockerfile
     container_name: frontend
     ports:
-      - 3000:3000
+      - 3000:80
     depends_on:
       - backend
-volumes:
-  data: {}
-
-networks:
-  default:
-    name: mongodb_network

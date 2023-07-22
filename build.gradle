@@ -5,7 +5,8 @@ plugins {
 }
 
 group = 'pl.edu.pg.projektGrupowy'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
+archivesBaseName = 'spring-boot-application'
 sourceCompatibility = '17'
 
 configurations {
@@ -20,15 +21,15 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+	compileOnly 'org.projectlombok:lombok:1.18.26'
+	annotationProcessor 'org.projectlombok:lombok:1.18.26'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
 	implementation 'org.springframework.data:spring-data-commons:3.0.0'
 	implementation 'org.springframework.boot:spring-boot-starter-web:3.0.1'
 	implementation 'org.springframework.data:spring-data-rest-core:4.0.0'
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb:3.0.1'
-	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
 	implementation 'org.seleniumhq.selenium:selenium-java:3.141.59'
 	testImplementation 'junit:junit:4.13'
 }

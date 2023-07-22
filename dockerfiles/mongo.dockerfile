@@ -1,2 +1,1 @@
-FROM mongo:latest
-LABEL org.opencontainers.image.source="https://github.com/pr0tex/DynaNotes"
+FROM mongo:6.0.5-jammy
